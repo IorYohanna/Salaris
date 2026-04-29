@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { EnseignantService } from './enseignant.service';
 
 @Controller('enseignant')
@@ -12,16 +12,24 @@ export class EnseignantController {
 
     @Get(':matricule')
     findOne(@Param('matricule') matricule: string) {
-        return this.service.findOne(matricule)
+        return this.service.findOne(matricule);
     }
 
     @Post()
-    create(@Body() body:any ) {
-        return this.service.create(body)
+    create(@Body() body: any) {
+        return this.service.create(body);
+    }
+
+    @Put(':matricule')
+    update(
+        @Param('matricule') matricule: string,
+        @Body() body: any
+    ) {
+        return this.service.update(matricule, body);
     }
 
     @Delete(':matricule')
     remove(@Param('matricule') matricule: string) {
-        return this.service.remove(matricule)
+        return this.service.remove(matricule);
     }
 }

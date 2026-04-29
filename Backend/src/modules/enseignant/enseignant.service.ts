@@ -26,4 +26,17 @@ export class EnseignantService {
     async remove(matricule: string) {
         return this.repo.delete(matricule)
     }
+
+    async update(matricule: string, data: Partial<Enseignant>) {
+    const enseignant = await this.repo.preload({
+        matricule,
+        ...data,
+    });
+
+    if (!enseignant) {
+        throw new Error('Enseignant non trouvé');
+    }
+
+    return this.repo.save(enseignant);
+}
 }
