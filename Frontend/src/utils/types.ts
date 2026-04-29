@@ -1,13 +1,13 @@
 export interface Teacher {
-    matricule: string;
-    nom: string;
-    tauxHoraire: number;
-    nbreHeures: number;
-    prestation?: number;
+  matricule: string;
+  nom: string;
+  tauxHoraire: number;
+  nbreHeures: number;
+  prestation?: number;
 }
 
-export interface User {
-    email: string;
-    name: string;
-    password?: string;
-}
+export type User = {
+  matricule: string;
+  googleId?: string | null;
+  token?: string;
+};
