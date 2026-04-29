@@ -99,7 +99,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             shape="rectangular"
             size="large"
             text="signup_with"
-            locale="fr"
           />
         </div>
       </div>

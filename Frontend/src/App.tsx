@@ -9,7 +9,7 @@ import Toast from "./components/Toast";
 import Sidebar from "./layouts/Sidebar";
 import Header from "./layouts/Header";
 import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage"; // ✅ Import ajouté
+import RegisterPage from "./pages/RegisterPage"; 
 import AddTeacherPage from "./pages/AddTeacherPage";
 import ListPage from "./pages/ListPage";
 import ReportPage from "./pages/ReportagePage";
@@ -23,7 +23,7 @@ const App = () => {
   const [activeModule, setActiveModule] = useState<"add" | "list" | "report">(
     "list",
   );
-  const [authMode, setAuthMode] = useState<"login" | "register">("login"); // ✅ État pour basculer
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
   const [toast, setToast] = useState<{
     message: string;
@@ -102,7 +102,6 @@ const App = () => {
     }
   };
 
-  /** Connexion via Google */
   const handleGoogleLogin = async (credential: string) => {
     try {
       const res = await googleLogin(credential);
@@ -124,7 +123,6 @@ const App = () => {
     showToast("Déconnexion réussie", "success");
   };
 
-  // --- RENDU ÉCRAN DE CONNEXION / INSCRIPTION ---
   if (!currentUser) {
     return (
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
@@ -146,7 +144,6 @@ const App = () => {
     );
   }
 
-  // --- RENDU APPLICATION PRINCIPALE ---
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex font-sans">
       <Toast message={toast.message} type={toast.type} />
