@@ -11,7 +11,7 @@ const Toast: React.FC<ToastProps> = ({ message, type }) => {
       className={` toast
         ${message ? 'translate-x-0' : 'translate-x-100'}
         ${type === 'success'
-          ? 'bg-linear-to-r from-lime-600 to-lime-500'
+          ? 'bg-linear-to-r from-[#6B4C35] to-[#876245]'
           : 'bg-linear-to-r from-red-600 to-red-500'
         }`}
     >

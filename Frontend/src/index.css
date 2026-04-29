@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .inputTheme {
-  @apply w-full bg-[#222] border border-[#333] rounded-xl py-3 px-4 focus:border-[#a3e635] outline-none;
+  @apply w-full bg-[#222] border border-[#333] rounded-xl py-3 px-4 focus:border-[#D4A574] outline-none;
 }
 
 .labelTheme {
@@ -9,7 +9,7 @@
 }
 
 .cancelButton {
-  @apply flex-1 border border-[#333] py-3 rounded-xl hover:bg-[#222];
+  @apply flex-1 border border-[#333] py-3 rounded-xl hover:bg-gray-400 hover:text-white hover:border-gray-400 transition-colors duration-300;
 }
 
 .column {
@@ -22,4 +22,55 @@
 
 .toast {
   @apply fixed top-5 right-5 p-4 rounded-xl text-white font-medium z-1000 transition-transform duration-300;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+
+.gradient-border {
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px; 
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.4), rgba(229, 231, 235, 0.5));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 
+              0 10px 10px -5px rgba(212, 165, 116, 0.1);
+  background: rgba(255, 255, 255, 1);
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -9,10 +9,10 @@ interface DeleteModalProps {
 const DeleteModal: React.FC<DeleteModalProps> = ({ matricule, onConfirm, onClose }) => {
   return (
     <div className="modal">
-      <div className="bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-8 max-w-md w-full text-center">
+      <div className="bg-white border border-red-500/30 rounded-2xl p-8 max-w-md w-full text-center">
         <h3 className="text-xl font-semibold mb-2">Confirmer la suppression</h3>
         <p className="text-gray-400 mb-6">
-          Voulez-vous vraiment supprimer l'enseignant <strong>{matricule}</strong> ?
+          Voulez-vous vraiment supprimer l'enseignant <strong className='text-[#D4A574]'>{matricule}</strong> ?
         </p>
         <div className="flex gap-4">
           <button

@@ -145,7 +145,7 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex font-sans">
+    <div className="min-h-screen bg-gray-100 text-gray-900 flex font-sans">
       <Toast message={toast.message} type={toast.type} />
 
       <Sidebar

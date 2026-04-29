@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Teacher } from '../utils/types';
+import { FaEdit, FaSyncAlt, FaTrash, FaSearch } from 'react-icons/fa';
 
 interface TeacherTableProps {
     teachers: Teacher[];
@@ -30,74 +31,91 @@ const TeacherTable: React.FC<TeacherTableProps> = ({
     });
 
     return (
-        <div className="bg-[#1a1a1a]/80 border border-lime-500/20 rounded-2xl overflow-hidden animate-fadeIn">
-            <div className="p-6 border-b border-[#222] flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <input
-                        type="text"
-                        placeholder="Rechercher..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className="bg-[#222] border border-[#333] rounded-xl py-2 px-4 text-white w-64 outline-none focus:border-[#a3e635]"
-                    />
+        <div className="bg-white border border-[#A67C52] rounded-3xl overflow-hidden shadow-sm animate-fadeIn">
+            <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
+                    <div className="relative">
+                        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+                        <input
+                            type="text"
+                            placeholder="Rechercher un enseignant..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="bg-gray-50 border border-gray-200 rounded-xl py-2 pl-10 pr-4 text-gray-700 w-full md:w-64 outline-none focus:border-[#D4A574] focus:ring-2 focus:ring-[#876245]/10 transition-all"
+                        />
+                    </div>
                     <select
                         value={filter}
                         onChange={e => setFilter(e.target.value)}
-                        className="bg-[#222] border border-[#333] rounded-xl py-2 px-4 text-white"
+                        className="bg-gray-50 border border-gray-200 rounded-xl py-2 px-4 text-gray-600 outline-none focus:border-[#D4A574] cursor-pointer"
                     >
-                        <option value="all">Tous</option>
-                        <option value="high">{'>'} 2000€</option>
-                        <option value="low">{'<'} 1000€</option>
+                        <option value="all">Tous les Enseignants</option>
+                        <option value="high">Prestation &gt; 2000€</option>
+                        <option value="low">Prestation &lt; 1000€</option>
                     </select>
                 </div>
-                <button onClick={onRefresh} className="text-gray-400 hover:text-[#a3e635]">
-                    <i className="fas fa-sync-alt"></i>
+
+                <button
+                    onClick={onRefresh}
+                    className="p-2 text-gray-400 hover:text-[#876245] hover:bg-[#876245]/10 rounded-lg transition-colors"
+                    title="Actualiser"
+                >
+                    <FaSyncAlt className="text-lg" />
                 </button>
             </div>
 
-
             <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead className="bg-[#222]/50">
+                <table className="w-full text-left">
+                    <thead className="bg-gray-50/50 border-b border-gray-100">
                         <tr>
-                            <th className="column">Matricule</th>
-                            <th className="column">Nom</th>
-                            <th className="column">Taux</th>
-                            <th className="column">Heures</th>
-                            <th className="text-left py-4 px-6 text-sm text-[#a3e635]">Prestation</th>
-                            <th className="column">Actions</th>
+                            <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-gray-500">Matricule</th>
+                            <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-gray-500">Nom</th>
+                            <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-gray-500">Taux</th>
+                            <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-gray-500">Heures</th>
+                            <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-[#876245]">Prestation</th>
+                            <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#222]">
-                        {filtered.map(teacher => (
-                            <tr key={teacher.matricule} className="hover:bg-[#222]/30 transition-all">
-                                <td className="py-4 px-6 font-mono text-sm">{teacher.matricule}</td>
-                                <td className="py-4 px-6 font-medium">{teacher.nom}</td>
-                                <td className="py-4 px-6 text-gray-400">{formatCurrency(teacher.tauxHoraire)}/h</td>
-                                <td className="py-4 px-6 text-gray-400">{teacher.nbreHeures}h</td>
-                                <td className="py-4 px-6">
-                                    <span className="text-[#a3e635] font-semibold">
-                                        {formatCurrency(teacher.prestation ?? teacher.tauxHoraire * teacher.nbreHeures)}
-                                    </span>
-                                </td>
-                                <td className="py-4 px-6 text-center">
-                                    <div className="flex items-center justify-center gap-2">
-                                        <button
-                                            onClick={() => onEdit(teacher)}
-                                            className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white transition-all"
-                                        >
-                                            <i className="fas fa-edit text-sm"></i>
-                                        </button>
-                                        <button
-                                            onClick={() => onDelete(teacher.matricule)}
-                                            className="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all"
-                                        >
-                                            <i className="fas fa-trash text-sm"></i>
-                                        </button>
-                                    </div>
+                    <tbody className="divide-y divide-gray-100">
+                        {filtered.length > 0 ? (
+                            filtered.map(teacher => (
+                                <tr key={teacher.matricule} className="hover:bg-[#876245]/5 transition-all group">
+                                    <td className="py-4 px-6 font-mono text-sm text-gray-600">{teacher.matricule}</td>
+                                    <td className="py-4 px-6 font-semibold text-gray-800">{teacher.nom}</td>
+                                    <td className="py-4 px-6 text-gray-500">{formatCurrency(teacher.tauxHoraire)}/h</td>
+                                    <td className="py-4 px-6 text-gray-500">{teacher.nbreHeures}h</td>
+                                    <td className="py-4 px-6">
+                                        <span className="text-[#876245] font-bold">
+                                            {formatCurrency(teacher.prestation ?? teacher.tauxHoraire * teacher.nbreHeures)}
+                                        </span>
+                                    </td>
+                                    <td className="py-4 px-6">
+                                        <div className="flex items-center justify-center gap-3">
+                                            <button
+                                                onClick={() => onEdit(teacher)}
+                                                className="p-2 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all shadow-sm"
+                                                title="Modifier"
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                            <button
+                                                onClick={() => onDelete(teacher.matricule)}
+                                                className="p-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                                                title="Supprimer"
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={6} className="py-12 text-center text-gray-400 italic">
+                                    Aucun enseignant trouvé...
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>

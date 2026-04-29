@@ -19,86 +19,81 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center p-4 font-sans">
-      <div className="bg-[#1a1a1a]/80 backdrop-blur-md border border-lime-500/30 rounded-2xl p-8 w-full max-w-md">
-        {/* En-tête */}
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center p-4 font-sans">
+      
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-md shadow-xl">
+        
         <div className="text-center mb-8">
-          <div className="w-16 h-16 border-2 border-[#a3e635] rounded-xl flex items-center justify-center mx-auto mb-4">
-            <i className="fas fa-user-plus text-2xl text-[#a3e635]"></i>
-          </div>
-          <h1 className="text-2xl font-bold mb-2">Inscription</h1>
-          <p className="text-gray-400 text-sm">
+          <h1 className="text-2xl font-bold uppercase text-gray-800 mb-2">Inscription</h1>
+          <p className="text-gray-500 text-sm">
             Créez votre compte pour accéder au système Salaris
           </p>
         </div>
 
-        {/* Formulaire d'inscription */}
         <form onSubmit={onRegister} className="space-y-5">
           <div>
-            <label className="labelTheme">Email</label>
+            <label className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
             <div className="relative">
-              <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
               <input
                 type="email"
-                id="loginEmail" // Gardé identique pour ton document.getElementById dans App.tsx
+                id="registerEmail" 
                 placeholder="votre@email.com"
                 required
-                className="inputTheme"
+                className="w-full bg-white border border-gray-300 rounded-xl py-3 px-11 text-gray-800 focus:border-[#D4A574] focus:ring-2 focus:ring-[#876245]/10 focus:outline-none transition-all placeholder:text-gray-400"
               />
             </div>
           </div>
 
           <div>
-            <label className="labelTheme">Mot de passe</label>
+            <label className="block mb-2 text-sm font-semibold text-gray-700">Mot de passe</label>
             <div className="relative">
-              <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
               <input
                 type="password"
-                id="loginPassword" // Gardé identique pour ton document.getElementById
+                id="registerPassword"
                 placeholder="Choisissez un mot de passe"
                 required
-                className="inputTheme"
+                className="w-full bg-white border border-gray-300 rounded-xl py-3 px-11 text-gray-800 focus:border-[#D4A574] focus:ring-2 focus:ring-[#876245]/10 focus:outline-none transition-all placeholder:text-gray-400"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-[#0a0a0a] font-semibold py-3 rounded-xl transition-all"
+            className="w-full bg-[#876245] hover:bg-[#6B4C35] text-white font-bold py-3 rounded-xl shadow-lg shadow-[#876245]/20 transition-all transform active:scale-[0.98]"
           >
             S'inscrire
           </button>
         </form>
 
-        {/* Lien vers Login */}
         <div className="text-center mt-6">
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-500 text-sm">
             Déjà un compte ?{" "}
             <button
               onClick={switchToLogin}
-              className="text-[#a3e635] font-semibold hover:underline"
+              className="text-[#876245] font-bold hover:text-[#6B4C35] hover:underline transition-all"
             >
               Se connecter
             </button>
           </p>
         </div>
 
-        {/* Séparateur */}
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-gray-700" />
-          <span className="text-gray-500 text-sm">ou</span>
-          <div className="flex-1 h-px bg-gray-700" />
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-gray-400 text-xs uppercase tracking-wider font-medium">ou</span>
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* Bouton Google */}
         <div className="flex justify-center">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => console.error("Échec Google")}
-            theme="filled_black"
+            theme="outline"
             shape="rectangular"
             size="large"
             text="signup_with"
+            width="100%"
           />
         </div>
       </div>
