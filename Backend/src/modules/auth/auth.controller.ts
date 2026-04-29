@@ -4,33 +4,31 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly service: AuthService) {}
+  constructor(private readonly service: AuthService) {}
 
-    @Get()
-    findAll() {
-        return this.service.findAll();
-    }
+  @Get()
+  findAll() {
+    return this.service.findAll();
+  }
 
-    @Get(':matricule')
-    findOne(@Param('matricule') matricule: string) {
-        return this.service.findOne(matricule);
-    }
+  @Get(':matricule')
+  findOne(@Param('matricule') matricule: string) {
+    return this.service.findOne(matricule);
+  }
 
-    @Post()
-    create(@Body() body: any) {
-        return this.service.create(body);
-    }
+  @Post()
+  create(@Body() body: any) {
+    return this.service.create(body);
+  }
 
-    @Put(':matricule')
-    update(
-        @Param('matricule') matricule: string,
-        @Body() body: any
-    ) {
-        return this.service.update(matricule, body);
-    }
+  @Put(':matricule')
+  update(@Param('matricule') matricule: string, @Body() body: any) {
+    return this.service.update(matricule, body);
+  }
 
-    @Delete(':matricule')
-    remove(@Param('matricule') matricule: string) {
-        return this.service.remove(matricule);
-    }
+  @Delete(':matricule')
+  remove(@Param('matricule') matricule: string) {
+    return this.service.remove(matricule);
+  }
+
 }
