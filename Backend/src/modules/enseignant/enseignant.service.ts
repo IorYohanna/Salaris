@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Enseignant } from './enseignant.entity';
 import { Repository } from 'typeorm';
@@ -34,15 +34,16 @@ export class EnseignantService {
     });
 
     if (!enseignant) {
-      throw new Error('Enseignant non trouvé');
+      throw new NotFoundException('Enseignant non trouvé');
     }
 
     return this.repo.save(enseignant);
   }
+
   async getPrestationStats() {
     const enseignants = await this.repo.find();
 
-    if (enseignants.length == 0) {
+    if (enseignants.length === 0) {
       return {
         total: 0,
         min: 0,
@@ -57,15 +58,11 @@ export class EnseignantService {
 
     const values = prestations.map((p) => p.prestation);
 
-    const total = values.reduce((acc, v) => acc + v, 0);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-
     return {
-      total,
-      min,
-      max,
-      details: prestations, // optionnel (utile pour debug / frontend)
+      total: values.reduce((a, b) => a + b, 0),
+      min: Math.min(...values),
+      max: Math.max(...values),
+      details: prestations,
     };
   }
 }
