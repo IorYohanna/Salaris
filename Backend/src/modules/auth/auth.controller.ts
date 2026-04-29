@@ -1,34 +1,30 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly service: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Get()
-  findAll() {
-    return this.service.findAll();
+  /** Connexion classique */
+  @Post('login')
+  login(@Body() body: { matricule: string; mdp: string }) {
+    return this.authService.login(body.matricule, body.mdp);
   }
 
-  @Get(':matricule')
-  findOne(@Param('matricule') matricule: string) {
-    return this.service.findOne(matricule);
+  // À l'intérieur de export class AuthController { ... }
+
+  /** Inscription classique */
+  @Post('register')
+  register(@Body() body: { matricule: string; mdp: string }) {
+    return this.authService.register(body.matricule, body.mdp);
   }
 
-  @Post()
-  create(@Body() body: any) {
-    return this.service.create(body);
+  /**
+   * Connexion / Inscription via Google.
+   * Le frontend envoie le credential (token JWT) renvoyé par le bouton Google.
+   */
+  @Post('google')
+  googleLogin(@Body() body: { credential: string }) {
+    return this.authService.googleLogin(body.credential);
   }
-
-  @Put(':matricule')
-  update(@Param('matricule') matricule: string, @Body() body: any) {
-    return this.service.update(matricule, body);
-  }
-
-  @Delete(':matricule')
-  remove(@Param('matricule') matricule: string) {
-    return this.service.remove(matricule);
-  }
-
 }

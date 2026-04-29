@@ -1,84 +1,152 @@
-import React, { useState, useEffect } from 'react';
-import type { Teacher, User } from './utils/types';
-import { getAllTeachers, fetchUsers } from './api/teacherApi';
+import React, { useState, useEffect } from "react";
+import type { Teacher, User } from "./utils/types";
+import { getAllTeachers } from "./api/teacherApi";
+import { login, googleLogin, register } from "./api/authApi";
 
-import Toast from './components/Toast';
-import Sidebar from './layouts/Sidebar';
-import Header from './layouts/Header';
-import LoginPage from './pages/LoginPage';
-import AddTeacherPage from './pages/AddTeacherPage';
-import ListPage from './pages/ListPage';
-import ReportPage from './pages/ReportagePage';
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
+import Toast from "./components/Toast";
+import Sidebar from "./layouts/Sidebar";
+import Header from "./layouts/Header";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage"; // ✅ Import ajouté
+import AddTeacherPage from "./pages/AddTeacherPage";
+import ListPage from "./pages/ListPage";
+import ReportPage from "./pages/ReportagePage";
+
+const GOOGLE_CLIENT_ID =
+  "1034638553052-skrbe7anmvsk09dilg98v0hdevllvl82.apps.googleusercontent.com";
 
 const App = () => {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [activeModule, setActiveModule] = useState<'add' | 'list' | 'report'>('list');
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | '' }>({
-    message: '',
-    type: '',
-  });
+  const [activeModule, setActiveModule] = useState<"add" | "list" | "report">(
+    "list",
+  );
+  const [authMode, setAuthMode] = useState<"login" | "register">("login"); // ✅ État pour basculer
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "";
+  }>({ message: "", type: "" });
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('currentUser');
+    const savedUser = localStorage.getItem("currentUser");
     if (savedUser) setCurrentUser(JSON.parse(savedUser));
     loadTeachers();
   }, []);
 
-  const showToast = (message: string, type: 'success' | 'error') => {
+  const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
-    setTimeout(() => setToast({ message: '', type: '' }), 3000);
+    setTimeout(() => setToast({ message: "", type: "" }), 3000);
   };
 
   const formatCurrency = (num: number) =>
-    new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(num);
+    new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+    }).format(num);
 
   const loadTeachers = async () => {
     try {
       const data = await getAllTeachers();
       setTeachers(data);
     } catch {
-      showToast('Impossible de charger les enseignants', 'error');
+      showToast("Impossible de charger les enseignants", "error");
     }
   };
 
+  /** Connexion classique */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const email = (document.getElementById('loginEmail') as HTMLInputElement).value;
-    const password = (document.getElementById('loginPassword') as HTMLInputElement).value;
+    const matricule = (
+      document.getElementById("loginEmail") as HTMLInputElement
+    ).value;
+    const mdp = (document.getElementById("loginPassword") as HTMLInputElement)
+      .value;
 
     try {
-      const users = await fetchUsers();
-      const user = users.find(u => u.email === email && u.password === password);
-
-      if (user || (email === 'admin@gestion.com' && password === 'password123')) {
-        const sessionUser = user || { email, name: 'Administrateur' };
-        setCurrentUser(sessionUser);
-        localStorage.setItem('currentUser', JSON.stringify(sessionUser));
-        showToast('Connexion réussie !', 'success');
+      const res = await login(matricule, mdp);
+      if (res.success && res.user) {
+        setCurrentUser(res.user);
+        localStorage.setItem("currentUser", JSON.stringify(res.user));
+        showToast("Connexion réussie !", "success");
       } else {
-        showToast('Identifiants incorrects', 'error');
+        showToast(res.message ?? "Erreur de connexion", "error");
       }
     } catch {
-      showToast('Erreur de connexion au serveur', 'error');
+      showToast("Erreur de connexion au serveur", "error");
+    }
+  };
+
+  /** Inscription classique */
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const matricule = (
+      document.getElementById("loginEmail") as HTMLInputElement
+    ).value;
+    const mdp = (document.getElementById("loginPassword") as HTMLInputElement)
+      .value;
+
+    try {
+      const res = await register(matricule, mdp);
+      if (res.success && res.user) {
+        setCurrentUser(res.user);
+        localStorage.setItem("currentUser", JSON.stringify(res.user));
+        showToast("Inscription réussie !", "success");
+      } else {
+        showToast(res.message ?? "Erreur d'inscription", "error");
+      }
+    } catch {
+      showToast("Erreur de connexion au serveur", "error");
+    }
+  };
+
+  /** Connexion via Google */
+  const handleGoogleLogin = async (credential: string) => {
+    try {
+      const res = await googleLogin(credential);
+      if (res.success && res.user) {
+        setCurrentUser(res.user);
+        localStorage.setItem("currentUser", JSON.stringify(res.user));
+        showToast("Connexion Google réussie !", "success");
+      } else {
+        showToast(res.message ?? "Erreur Google", "error");
+      }
+    } catch {
+      showToast("Erreur de connexion Google au serveur", "error");
     }
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-    showToast('Déconnexion réussie', 'success');
+    localStorage.removeItem("currentUser");
+    showToast("Déconnexion réussie", "success");
   };
 
+  // --- RENDU ÉCRAN DE CONNEXION / INSCRIPTION ---
   if (!currentUser) {
     return (
-      <>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <Toast message={toast.message} type={toast.type} />
-        <LoginPage onLogin={handleLogin} />
-      </>
+        {authMode === "login" ? (
+          <LoginPage
+            onLogin={handleLogin}
+            onGoogleLogin={handleGoogleLogin}
+            switchToRegister={() => setAuthMode("register")}
+          />
+        ) : (
+          <RegisterPage
+            onRegister={handleRegister}
+            onGoogleLogin={handleGoogleLogin}
+            switchToLogin={() => setAuthMode("login")}
+          />
+        )}
+      </GoogleOAuthProvider>
     );
   }
 
+  // --- RENDU APPLICATION PRINCIPALE ---
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex font-sans">
       <Toast message={toast.message} type={toast.type} />
@@ -94,14 +162,11 @@ const App = () => {
         <Header activeModule={activeModule} />
 
         <div className="p-8">
-          {activeModule === 'add' && (
-            <AddTeacherPage
-              onSuccess={loadTeachers}
-              showToast={showToast}
-            />
+          {activeModule === "add" && (
+            <AddTeacherPage onSuccess={loadTeachers} showToast={showToast} />
           )}
 
-          {activeModule === 'list' && (
+          {activeModule === "list" && (
             <ListPage
               teachers={teachers}
               onRefresh={loadTeachers}
@@ -110,11 +175,8 @@ const App = () => {
             />
           )}
 
-          {activeModule === 'report' && (
-            <ReportPage
-              teachers={teachers}
-              formatCurrency={formatCurrency}
-            />
+          {activeModule === "report" && (
+            <ReportPage teachers={teachers} formatCurrency={formatCurrency} />
           )}
         </div>
       </main>
