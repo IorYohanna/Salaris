@@ -65,7 +65,7 @@ export class EnseignantService {
       total,
       min,
       max,
-      details: prestations, // optionnel (utile pour debug / frontend)
+      details: prestations,
     };
   }
 }

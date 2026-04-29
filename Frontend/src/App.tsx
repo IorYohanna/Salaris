@@ -1,121 +1,125 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import type { Teacher, User } from './utils/types';
+import { getAllTeachers, fetchUsers } from './api/teacherApi';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Toast from './components/Toast';
+import Sidebar from './layouts/Sidebar';
+import Header from './layouts/Header';
+import LoginPage from './pages/LoginPage';
+import AddTeacherPage from './pages/AddTeacherPage';
+import ListPage from './pages/ListPage';
+import ReportPage from './pages/ReportagePage';
+
+const App = () => {
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [activeModule, setActiveModule] = useState<'add' | 'list' | 'report'>('list');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | '' }>({
+    message: '',
+    type: '',
+  });
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    loadTeachers();
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+    setTimeout(() => setToast({ message: '', type: '' }), 3000);
+  };
+
+  const formatCurrency = (num: number) =>
+    new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(num);
+
+  const loadTeachers = async () => {
+    try {
+      const data = await getAllTeachers();
+      setTeachers(data);
+    } catch {
+      showToast('Impossible de charger les enseignants', 'error');
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = (document.getElementById('loginEmail') as HTMLInputElement).value;
+    const password = (document.getElementById('loginPassword') as HTMLInputElement).value;
+
+    try {
+      const users = await fetchUsers();
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user || (email === 'admin@gestion.com' && password === 'password123')) {
+        const sessionUser = user || { email, name: 'Administrateur' };
+        setCurrentUser(sessionUser);
+        localStorage.setItem('currentUser', JSON.stringify(sessionUser));
+        showToast('Connexion réussie !', 'success');
+      } else {
+        showToast('Identifiants incorrects', 'error');
+      }
+    } catch {
+      showToast('Erreur de connexion au serveur', 'error');
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+    showToast('Déconnexion réussie', 'success');
+  };
+
+  if (!currentUser) {
+    return (
+      <>
+        <Toast message={toast.message} type={toast.type} />
+        <LoginPage onLogin={handleLogin} />
+      </>
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex font-sans">
+      <Toast message={toast.message} type={toast.type} />
 
-      <div className="ticks"></div>
+      <Sidebar
+        currentUser={currentUser}
+        activeModule={activeModule}
+        onModuleChange={setActiveModule}
+        onLogout={handleLogout}
+      />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main className="flex-1 ml-72">
+        <Header activeModule={activeModule} />
+
+        <div className="p-8">
+          {activeModule === 'add' && (
+            <AddTeacherPage
+              onSuccess={loadTeachers}
+              showToast={showToast}
+            />
+          )}
+
+          {activeModule === 'list' && (
+            <ListPage
+              teachers={teachers}
+              onRefresh={loadTeachers}
+              showToast={showToast}
+              formatCurrency={formatCurrency}
+            />
+          )}
+
+          {activeModule === 'report' && (
+            <ReportPage
+              teachers={teachers}
+              formatCurrency={formatCurrency}
+            />
+          )}
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </main>
+    </div>
+  );
+};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
-
-export default App
+export default App;
