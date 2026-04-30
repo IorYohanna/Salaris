@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Enseignant } from './enseignant.entity';
 import { Repository } from 'typeorm';
@@ -18,9 +18,17 @@ export class EnseignantService {
     return this.repo.findOneBy({ matricule });
   }
 
-  create(data: Partial<Enseignant>) {
+  async create(data: Partial<Enseignant>) {
+    const exists = await this.repo.findOne({
+      where: { matricule: data.matricule },
+    });
+
+    if (exists) {
+      throw new ConflictException('Matricule déjà existant');
+    }
+
     const enseignant = this.repo.create(data);
-    return this.repo.save(enseignant);
+    return await this.repo.save(enseignant);
   }
 
   async remove(matricule: string) {

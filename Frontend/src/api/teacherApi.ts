@@ -16,19 +16,26 @@ export const getAllTeachers = async (): Promise<Teacher[]> => {
 };
 
 export const createTeacher = async (
-  data: Omit<Teacher, 'prestation'>
+  data: Omit<Teacher, "prestation">,
 ): Promise<Teacher> => {
   const payload = {
     ...data,
     prestation: data.tauxHoraire * data.nbreHeures,
   };
+
   const response = await fetch(`${API_URL}/enseignant`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (!response.ok) throw new Error("Erreur lors de l'ajout");
-  return response.json();
+
+  const resData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resData.message || "Erreur lors de l'ajout");
+  }
+
+  return resData;
 };
 
 export const updateTeacher = async (teacher: Teacher): Promise<Teacher> => {

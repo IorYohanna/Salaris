@@ -42,7 +42,7 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
       data: {
         labels: top5.map(t => t.nom.split(' ')[0]),
         datasets: [{
-          label: 'Prestation (€)',
+          label: 'Prestation (Ar)',
           data: top5.map(getPrestation),
           backgroundColor: '#D4A574',
           borderRadius: 12,
@@ -67,9 +67,9 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
     });
 
     const ranges = {
-      'Faible (<1000€)': teachers.filter(t => getPrestation(t) < 1000).length,
-      'Moyenne (1000-2000€)': teachers.filter(t => { const p = getPrestation(t); return p >= 1000 && p <= 2000; }).length,
-      'Élevée (>2000€)': teachers.filter(t => getPrestation(t) > 2000).length,
+      'Faible (<1000Ar)': teachers.filter(t => getPrestation(t) < 1000).length,
+      'Moyenne (1000-2000Ar)': teachers.filter(t => { const p = getPrestation(t); return p >= 1000 && p <= 2000; }).length,
+      'Élevée (>2000Ar)': teachers.filter(t => getPrestation(t) > 2000).length,
     };
 
     pieChartInstance.current = new Chart(pieChartRef.current, {

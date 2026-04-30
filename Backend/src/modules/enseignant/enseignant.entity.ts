@@ -1,16 +1,17 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, Unique } from "typeorm";
 
 @Entity()
+@Unique(['matricule'])
 export class Enseignant {
-    @PrimaryColumn()
-    matricule: string;
+  @PrimaryColumn()
+  matricule: string;
 
-    @Column()
-    nom: string;
+  @Column()
+  nom: string;
 
-    @Column()
-    tauxHoraire: number;
+  @Column()
+  tauxHoraire: number;
 
-    @Column()
-    nbreHeures: number;
+  @Column()
+  nbreHeures: number;
 }
