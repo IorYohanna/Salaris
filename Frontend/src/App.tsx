@@ -45,7 +45,7 @@ const App = () => {
     new Intl.NumberFormat("fr-FR", {
       style: "decimal",
       maximumFractionDigits: 0,
-    }).format(num) + " Ar";
+    }).format(num) + "€";
 
   const loadTeachers = async () => {
     try {

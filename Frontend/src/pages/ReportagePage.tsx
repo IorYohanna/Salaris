@@ -18,9 +18,9 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
   const pieChartInstance = useRef<Chart | null>(null);
 
   const getPrestation = (t: Teacher) => t.prestation ?? (t.tauxHoraire * t.nbreHeures);
-  
+
   const prestations = useMemo(() => teachers.map(getPrestation), [teachers]);
-  
+
   const stats = useMemo(() => ({
     total: prestations.reduce((acc, v) => acc + v, 0),
     min: prestations.length ? Math.min(...prestations) : 0,
@@ -42,11 +42,11 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
       data: {
         labels: top5.map(t => t.nom.split(' ')[0]),
         datasets: [{
-          label: 'Prestation (Ar)',
+          label: 'Prestation (€)',
           data: top5.map(getPrestation),
-          backgroundColor: '#D4A574',
+          backgroundColor: '#198450',
           borderRadius: 12,
-          hoverBackgroundColor: '#A67C52',
+          hoverBackgroundColor: '#27a567',
         }],
       },
       options: {
@@ -54,31 +54,31 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: { 
+          y: {
             grid: { color: '#f3f4f6' },
-            ticks: { color: '#6b7280' }  
+            ticks: { color: '#6b7280' }
           },
-          x: { 
-            grid: { display: false }, 
-            ticks: { color: '#6b7280' } 
+          x: {
+            grid: { display: false },
+            ticks: { color: '#6b7280' }
           }
         },
       },
     });
 
-    const ranges = {
-      'Faible (<1000Ar)': teachers.filter(t => getPrestation(t) < 1000).length,
-      'Moyenne (1000-2000Ar)': teachers.filter(t => { const p = getPrestation(t); return p >= 1000 && p <= 2000; }).length,
-      'Élevée (>2000Ar)': teachers.filter(t => getPrestation(t) > 2000).length,
+    const bilanData = {
+      'Total': stats.total,
+      'Minimum': stats.min,
+      'Maximum': stats.max,
     };
 
     pieChartInstance.current = new Chart(pieChartRef.current, {
       type: 'doughnut',
       data: {
-        labels: Object.keys(ranges),
+        labels: Object.keys(bilanData),
         datasets: [{
-          data: Object.values(ranges),
-          backgroundColor: ['#60a5fa', '#D4A574', '#c084fc'],
+          data: Object.values(bilanData),
+          backgroundColor: ['#27a567', '#ffce00', '#f04525'],
           borderWidth: 4,
           borderColor: '#ffffff',
         }],
@@ -88,13 +88,8 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
         maintainAspectRatio: false,
         cutout: '70%',
         plugins: {
-          legend: { 
-            position: 'bottom', 
-            labels: { 
-              color: '#4b5563', 
-              padding: 20,
-              font: { weight: 'bold' }
-            } 
+          legend: {
+            position: 'bottom',
           }
         },
       },
@@ -109,27 +104,27 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
   return (
     <div className="animate-fadeIn p-4 space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard 
-          label="Prestation Totale" 
-          value={formatCurrency(stats.total)} 
-          icon={FaCalculator} 
-          iconBg="bg-[#876245]/10" 
+        <StatCard
+          label="Prestation Totale"
+          value={formatCurrency(stats.total)}
+          icon={FaCalculator}
+          iconBg="bg-[#876245]/10"
           iconColor="text-[#876245]"
           tag="Total"
         />
-        <StatCard 
-          label="Prestation Minimale" 
-          value={formatCurrency(stats.min)} 
-          icon={FaArrowDown} 
-          iconBg="bg-blue-100" 
+        <StatCard
+          label="Prestation Minimale"
+          value={formatCurrency(stats.min)}
+          icon={FaArrowDown}
+          iconBg="bg-blue-100"
           iconColor="text-blue-700"
           tag="Minimum"
         />
-        <StatCard 
-          label="Prestation Maximale" 
-          value={formatCurrency(stats.max)} 
-          icon={FaArrowUp} 
-          iconBg="bg-purple-100" 
+        <StatCard
+          label="Prestation Maximale"
+          value={formatCurrency(stats.max)}
+          icon={FaArrowUp}
+          iconBg="bg-purple-100"
           iconColor="text-purple-700"
           tag="Maximum"
         />
@@ -185,7 +180,7 @@ const ReportPage: React.FC<ReportPageProps> = ({ teachers, formatCurrency }) => 
                   </td>
                   <td className="py-4 px-6">
                     <span className="px-2 py-1 bg-gray-50 text-gray-500 rounded-md font-mono text-xs border border-gray-200">
-                        {t.matricule}
+                      {t.matricule}
                     </span>
                   </td>
                   <td className="py-4 px-6 text-right">

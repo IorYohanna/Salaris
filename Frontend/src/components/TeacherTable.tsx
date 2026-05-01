@@ -50,8 +50,8 @@ const TeacherTable: React.FC<TeacherTableProps> = ({
                         className="bg-gray-50 border border-gray-200 rounded-xl py-2 px-4 text-gray-600 outline-none focus:border-[#D4A574] cursor-pointer"
                     >
                         <option value="all">Tous les Enseignants</option>
-                        <option value="high">Prestation &gt; 2000Ar</option>
-                        <option value="low">Prestation &lt; 1000Ar</option>
+                        <option value="high">Prestation &gt; 2000€</option>
+                        <option value="low">Prestation &lt; 1000€</option>
                     </select>
                 </div>
 

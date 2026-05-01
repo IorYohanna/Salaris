@@ -59,7 +59,6 @@ const AddTeacherPage: React.FC<AddTeacherPageProps> = ({ onSuccess, showToast })
                 <label className="block mb-2 text-sm font-semibold text-gray-700">
                   Matricule
                 </label>
-                <FaIdBadge className="text-gray-400 mb-2" />
                 <input
                   type="text"
                   placeholder=" EX: ENS001"
@@ -89,7 +88,7 @@ const AddTeacherPage: React.FC<AddTeacherPageProps> = ({ onSuccess, showToast })
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-2 text-sm font-semibold text-gray-700">
-                  Taux horaire (Ar)
+                  Taux horaire (€)
                 </label>
                 <input
                   type="number"
@@ -137,10 +136,7 @@ const AddTeacherPage: React.FC<AddTeacherPageProps> = ({ onSuccess, showToast })
               </div>
               <div className="text-right">
                 <span className="text-2xl font-black text-[#876245]">
-                  {estimation.toLocaleString("fr-FR", {
-                    maximumFractionDigits: 0,
-                  })}{" "}
-                  Ar
+                   {estimation.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
                 </span>
               </div>
             </div>
